@@ -42,7 +42,7 @@ function timeWord(time) {
   // Determine the minute
   if (hrMin.minute === 0) {
     hrMin.minute = "o'clock";
-    console.log(`${hrMin.hour} ${hrMin.minute} ${hrMin.amPm}`);
+    // console.log(`${hrMin.hour} ${hrMin.minute} ${hrMin.amPm}`);
     return `${hrMin.hour} ${hrMin.minute} ${hrMin.amPm}`;
   }
   const aughts = hours.slice(1, 10);
@@ -81,11 +81,13 @@ function timeWord(time) {
       hrMin.mintute = `fifty-${aughts[hrMin.minute - 51]}`;
     }
   }
-  console.log(`${hrMin.hour} ${hrMin.minute} ${hrMin.amPm}`);
+  //   console.log(`${hrMin.hour} ${hrMin.minute} ${hrMin.amPm}`);
   return `${hrMin.hour} ${hrMin.minute} ${hrMin.amPm}`;
 }
 
-timeWord("13:10");
-timeWord("12:12");
-timeWord("6:00");
-timeWord("23:29");
+// timeWord("13:10");
+// timeWord("12:12");
+// timeWord("6:00");
+// timeWord("23:29");
+
+module.exports = { timeWord };

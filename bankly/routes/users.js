@@ -3,8 +3,10 @@
 const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
-const ExpressError = require("../helpers/expressError");
 const { authUser, requireLogin, requireAdmin } = require("../middleware/auth");
+const jsonschema = require("jsonschema");
+const userUpdateSchema = require("../schemas/userUpdate.json");
+const { ExpressError, BadRequestError } = require("../helpers/expressError");
 
 /** GET /
  *
@@ -78,6 +80,12 @@ router.patch(
       // get fields to change; remove token so we don't try to change it
       let fields = { ...req.body };
       delete fields._token;
+
+      const validator = jsonschema.validate(fields, userUpdateSchema);
+      if (!validator.valid) {
+        const errs = validator.errors.map((e) => e.stack);
+        throw new BadRequestError(errs);
+      }
 
       let user = await User.update(req.params.username, fields);
       return res.json({ user });

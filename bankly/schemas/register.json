@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "examples": [
+    {
+      "username": "snstrong",
+      "first_name": "Sara",
+      "last_name": "Strong",
+      "email": "sara.n.strong@gmail.com",
+      "phone": "5556667777",
+      "password": "flibbertibbiget"
+    }
+  ],
+  "required": [
+    "username",
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "password"
+  ],
+  "properties": {
+    "username": {
+      "$id": "#/properties/username",
+      "type": "string",
+      "examples": ["snstrong"]
+    },
+    "first_name": {
+      "$id": "#/properties/first_name",
+      "type": "string",
+      "examples": ["Sara"]
+    },
+    "last_name": {
+      "$id": "#/properties/last_name",
+      "type": "string",
+      "examples": ["Strong"]
+    },
+    "email": {
+      "$id": "#/properties/email",
+      "type": "string",
+      "format": "email",
+      "examples": ["sara.n.strong@gmail.com"]
+    },
+    "phone": {
+      "$id": "#/properties/phone",
+      "type": "string",
+      "pattern": "^(\\d{10})|(\\d{12})$",
+      "examples": ["5556667777"]
+    },
+    "password": {
+      "$id": "#/properties/password",
+      "type": "string",
+      "examples": ["flibbertibbiget"]
+    }
+  },
+  "additionalProperties": false
+}

@@ -11,10 +11,18 @@ class ExpressError extends Error {
     super();
     this.message = message;
     this.status = status;
-    if(process.env.NODE_ENV !== "test"){
+    if (process.env.NODE_ENV !== "test") {
       console.error(this.stack);
     }
   }
 }
 
-module.exports = ExpressError;
+/** 400 BAD REQUEST error. */
+
+class BadRequestError extends ExpressError {
+  constructor(message = "Bad Request") {
+    super(message, 400);
+  }
+}
+
+module.exports = { ExpressError, BadRequestError };

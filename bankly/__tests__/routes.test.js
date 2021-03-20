@@ -127,7 +127,7 @@ describe("GET /users", function () {
   test("should list all users", async function () {
     const response = await request(app)
       .get("/users")
-      .send({ _token: tokens.u1 });
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.users.length).toBe(3);
   });
@@ -135,7 +135,7 @@ describe("GET /users", function () {
   test("should return correct user information", async function () {
     const response = await request(app)
       .get("/users")
-      .send({ _token: tokens.u1 });
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.users).toEqual([
       { username: "u1", firstName: "fn1", lastName: "ln1" },
@@ -154,7 +154,7 @@ describe("GET /users/[username]", function () {
   test("should return data on u1", async function () {
     const response = await request(app)
       .get("/users/u1")
-      .send({ _token: tokens.u1 });
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.user).toEqual({
       username: "u1",
@@ -175,14 +175,15 @@ describe("PATCH /users/[username]", function () {
   test("should deny access if not admin/right user", async function () {
     const response = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u2 }); // wrong user!
+      .set("authorization", `bearer ${tokens.u2}`); // wrong user!
     expect(response.statusCode).toBe(401);
   });
 
   test("should patch data if admin", async function () {
     const response = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u3, first_name: "new-fn1" }); // u3 is admin
+      .send({ first_name: "new-fn1" })
+      .set("authorization", `bearer ${tokens.u3}`); // u3 is admin
     expect(response.statusCode).toBe(200);
     expect(response.body.user).toEqual({
       username: "u1",
@@ -195,10 +196,11 @@ describe("PATCH /users/[username]", function () {
     });
   });
 
-  test("should not allow token to be patched", async function () {
+  test("should not allow admin status to be patched", async function () {
     const response = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u1, admin: true });
+      .send({ admin: true })
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(400);
   });
 
@@ -206,12 +208,14 @@ describe("PATCH /users/[username]", function () {
   test("should throw error for invalid data", async function () {
     const response = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u1, email: "nope", admin: true });
+      .send({ email: "nope", admin: true })
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(400);
 
     const response1 = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u1, phone: "123456789", admin: true });
+      .send({ phone: "123456789", admin: true })
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(400);
   });
 
@@ -219,14 +223,16 @@ describe("PATCH /users/[username]", function () {
   test("should throw error for disallowed fields", async function () {
     const response = await request(app)
       .patch("/users/u1")
-      .send({ _token: tokens.u1, notAllowed: "blahblahblah", admin: true });
+      .send({ notAllowed: "blahblahblah", admin: true })
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(400);
   });
 
   test("should return 404 if cannot find", async function () {
     const response = await request(app)
       .patch("/users/not-a-user")
-      .send({ _token: tokens.u3, first_name: "new-fn" }); // u3 is admin
+      .send({ first_name: "new-fn" })
+      .set("authorization", `bearer ${tokens.u3}`); // u3 is admin
     expect(response.statusCode).toBe(404);
   });
 });
@@ -240,14 +246,14 @@ describe("DELETE /users/[username]", function () {
   test("should deny access if not admin", async function () {
     const response = await request(app)
       .delete("/users/u1")
-      .send({ _token: tokens.u1 });
+      .set("authorization", `bearer ${tokens.u1}`);
     expect(response.statusCode).toBe(401);
   });
 
   test("should allow if admin", async function () {
     const response = await request(app)
       .delete("/users/u1")
-      .send({ _token: tokens.u3 }); // u3 is admin
+      .set("authorization", `bearer ${tokens.u3}`); // u3 is admin
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ message: "deleted" });
   });

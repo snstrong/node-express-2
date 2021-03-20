@@ -60,7 +60,7 @@ Token should be sent in request authorization header, not request body
 Fix:
 
 - [x] Update middleware/auth.js authUser to check for token in header rather than body or query string
-- [] Update tests for affected routes
+- [x] Update tests for affected routes
 
 ---
 

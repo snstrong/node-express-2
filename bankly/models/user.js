@@ -72,7 +72,7 @@ class User {
 
   /** Returns list of user info:
    *
-   * [{username, first_name, last_name}, ...]
+   * [{username, firstName, lastName}, ...]
    *
    * */
 

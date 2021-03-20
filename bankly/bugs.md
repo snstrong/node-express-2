@@ -1,4 +1,4 @@
-Bugs
+# Bugs
 
 BUGS #1-2
 JSON schema validation missing for routes
@@ -6,6 +6,7 @@ JSON schema validation missing for routes
 BUG #1:
 routes/auth.js
 POST /register
+
 Fix:
 
 - [x] Created validation schema for route, helpers/register.json
@@ -15,6 +16,7 @@ Fix:
 BUG #2:
 routes/users.js
 PATCH /:username
+
 Fix:
 
 - [x] Created validation schema for route, helpers/userUpdate.json
@@ -28,6 +30,7 @@ Fix for BUGS #1-2:
 BUG #3:
 routes/user.js
 GET / returns too much information about users; should only return basic info in this route
+
 Fix:
 
 - [x] Change SELECT statement in User.findAll to only return username, firstName, lastName
@@ -36,6 +39,7 @@ Fix:
 BUG #4:
 routes/user.js
 PATCH/:username authorization is faulty. Currently denies access for correct user and only allows admin. This auth be moved into middleware that checks to ensure user is same user or is admin to improve scalability of code
+
 Fix:
 
 - [x] move auth logic from route to middleware/auth.js
@@ -44,9 +48,11 @@ Fix:
 BUG #5:
 middleware/auth.js
 
-- authUser is decoding but not verifying JWT
-  Fix:
-  - [x] Verify token
+authUser is decoding but not verifying JWT
+
+Fix:
+
+- [x] Verify token
 
 BUG #6:
 routes/auth.js
@@ -57,6 +63,7 @@ Fix:
 
 BUG #6:
 Token should be sent in request authorization header, not request body
+
 Fix:
 
 - [x] Update middleware/auth.js authUser to check for token in header rather than body or query string

@@ -51,12 +51,16 @@ middleware/auth.js
 BUG #6:
 routes/auth.js
 Not awaiting async function: User.authenticate in login route
-Fix
+Fix:
 
 - [x] await User.authenticate
 
 BUG #6:
 Token should be sent in request authorization header, not request body
+Fix:
+
+- [x] Update middleware/auth.js authUser to check for token in header rather than body or query string
+- [] Update tests for affected routes
 
 ---
 

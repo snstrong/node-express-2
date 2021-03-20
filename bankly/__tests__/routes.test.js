@@ -37,7 +37,7 @@ beforeEach(async function () {
 });
 
 describe("POST /auth/register", function () {
-  test("should allow a user to register in", async function () {
+  test("should allow a user to register", async function () {
     const response = await request(app).post("/auth/register").send({
       username: "new_user",
       password: "new_password",
@@ -53,7 +53,7 @@ describe("POST /auth/register", function () {
     expect(username).toBe("new_user");
     expect(admin).toBe(false);
   });
-  // BUG #1: This test failed but should pass
+  // TESTS BUG #1
   test("should throw error for invalid data", async function () {
     const response = await request(app).post("/auth/register").send({
       username: "new_user",
@@ -65,7 +65,7 @@ describe("POST /auth/register", function () {
     });
     expect(response.statusCode).toBe(400);
   });
-
+  // TESTS BUG #1
   test("should throw error for too many fields", async function () {
     const response = await request(app).post("/auth/register").send({
       username: "new_user",
@@ -109,6 +109,13 @@ describe("POST /auth/login", function () {
     expect(username).toBe("u1");
     expect(admin).toBe(false);
   });
+  test("should deny access for incorrect username/password", async function () {
+    const response = await request(app).post("/auth/login").send({
+      username: "u1",
+      password: "pwd2",
+    });
+    expect(response.statusCode).toBe(401);
+  });
 });
 
 describe("GET /users", function () {
@@ -123,6 +130,18 @@ describe("GET /users", function () {
       .send({ _token: tokens.u1 });
     expect(response.statusCode).toBe(200);
     expect(response.body.users.length).toBe(3);
+  });
+  // TESTS BUG
+  test("should return correct user information", async function () {
+    const response = await request(app)
+      .get("/users")
+      .send({ _token: tokens.u1 });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.users).toEqual([
+      { username: "u1", firstName: "fn1", lastName: "ln1" },
+      { username: "u2", firstName: "fn2", lastName: "ln2" },
+      { username: "u3", firstName: "fn3", lastName: "ln3" },
+    ]);
   });
 });
 
@@ -176,11 +195,32 @@ describe("PATCH /users/[username]", function () {
     });
   });
 
-  test("should disallowing patching not-allowed-fields", async function () {
+  test("should not allow token to be patched", async function () {
     const response = await request(app)
       .patch("/users/u1")
       .send({ _token: tokens.u1, admin: true });
-    expect(response.statusCode).toBe(401);
+    expect(response.statusCode).toBe(400);
+  });
+
+  // TESTS BUG #2
+  test("should throw error for invalid data", async function () {
+    const response = await request(app)
+      .patch("/users/u1")
+      .send({ _token: tokens.u1, email: "nope", admin: true });
+    expect(response.statusCode).toBe(400);
+
+    const response1 = await request(app)
+      .patch("/users/u1")
+      .send({ _token: tokens.u1, phone: "123456789", admin: true });
+    expect(response.statusCode).toBe(400);
+  });
+
+  // TESTS BUG #2
+  test("should throw error for disallowed fields", async function () {
+    const response = await request(app)
+      .patch("/users/u1")
+      .send({ _token: tokens.u1, notAllowed: "blahblahblah", admin: true });
+    expect(response.statusCode).toBe(400);
   });
 
   test("should return 404 if cannot find", async function () {

@@ -3,7 +3,12 @@
 const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
-const { authUser, requireLogin, requireAdmin } = require("../middleware/auth");
+const {
+  authUser,
+  requireLogin,
+  requireAdmin,
+  requireAdminOrCorrectUser,
+} = require("../middleware/auth");
 const jsonschema = require("jsonschema");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 const { ExpressError, BadRequestError } = require("../helpers/expressError");
@@ -70,13 +75,9 @@ router.patch(
   "/:username",
   authUser,
   requireLogin,
-  requireAdmin,
+  requireAdminOrCorrectUser,
   async function (req, res, next) {
     try {
-      if (!req.curr_admin && req.curr_username !== req.params.username) {
-        throw new ExpressError("Only that user or admin can edit a user.", 401);
-      }
-
       // get fields to change; remove token so we don't try to change it
       let fields = { ...req.body };
       delete fields._token;
